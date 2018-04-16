@@ -1,0 +1,66 @@
+{
+  "name": "mastodon-rss-bot",
+  "version": "1.0.0",
+  "description": "simple bot who toot on matdont each new item from the specified feed",
+  "license": "MIT",
+  "scripts": {
+    "postinstall": "ts-node scripts/postinstall.ts",
+    "build": "cross-env NODE_ENV=production tsc && node src/admin/config/build.js",
+    "cz": "git-cz",
+    "dev": "cross-env NODE_ENV=local nodemon",
+    "lint": "tslint \"./src/**/*.ts\" \"./src/**/*.tsx\"",
+    "precommit": "lint-staged",
+    "start": "cross-env NODE_ENV=production node dist/index.js"
+  },
+  "dependencies": {
+    "bunyan": "^1.8.12",
+    "node-fetch": "^2.1.2",
+    "rxjs": "^5.5.10",
+    "yenv": "^2.1.0"
+  },
+  "devDependencies": {
+    "@types/bunyan": "^1.8.4",
+    "@types/dotenv": "^4.0.3",
+    "@types/node": "^9.6.5",
+    "@types/node-fetch": "^1.6.8",
+    "commitizen": "^2.9.6",
+    "cross-env": "^5.1.3",
+    "cz-conventional-changelog": "^2.1.0",
+    "husky": "^0.14.3",
+    "json-d-ts": "^1.0.1",
+    "jsonlint-cli": "^1.0.1",
+    "lint-staged": "^7.0.0",
+    "markdownlint-cli": "^0.7.1",
+    "nodemon": "^1.14.1",
+    "prettier": "^1.10.2",
+    "ts-node": "^5.0.0",
+    "tslint": "^5.9.1",
+    "tslint-config-prettier": "^1.8.0",
+    "tslint-plugin-prettier": "^1.3.0",
+    "typescript": "^2.7.2",
+    "yaml-lint": "^1.1.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "tslint --fix",
+      "git add"
+    ],
+    "*.json": [
+      "jsonlint-cli --sort",
+      "git add"
+    ],
+    "*.{yaml,yml}": [
+      "yamllint",
+      "git add"
+    ],
+    "*.md": [
+      "markdownlint",
+      "git add"
+    ]
+  }
+}
