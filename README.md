@@ -1,1 +1,1 @@
-# astodon rss bot
+# Mastodon rss bot
