@@ -1,7 +1,3 @@
-import fetch from 'node-fetch';
+import { promisify } from 'util';
 
-export const getFeed = async () => {
-  const response = await fetch(process.env.RSSFEED_URL as string);
-
-  return response.json();
-};
+export const getFeed = promisify(require('feed-read-parser'));
