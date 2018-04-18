@@ -14,7 +14,7 @@ const formatContent = (article: Article) => {
   return (
     article.title +
     '\n' +
-    splittedContent.join('\n').substr(0, 300) +
+    splittedContent.join('\n').substr(0, 250) +
     '...\n\n' +
     footer
   );
