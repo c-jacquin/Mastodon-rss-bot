@@ -1,3 +1,5 @@
+import request from 'request';
+
 import { Toot } from '../interfaces/Toot';
 
 const Mastodon = require('mastodon-api');
@@ -7,10 +9,30 @@ const masto = new Mastodon({
   api_url: `${process.env.MASTODON_INSTANCE}/api/v1/`,
 });
 
+const onImageUploaded = (resp: any, toot: Toot) => {
+  delete toot.imageUrls;
+  return resp.data.id;
+};
+
 export const sendToots = (toots: Toot[]): Promise<Toot[]> => {
   return Promise.all(
     toots.map(({ articleDate, ...toot }) =>
       masto.post('statuses', toot).then(data => ({ ...toot, articleDate })),
     ),
+  );
+};
+
+export const uploadImages = (toots: Toot[]): Promise<any> => {
+  return Promise.all(
+    toots.map(async toot => ({
+      ...toot,
+      media_ids: await Promise.all(
+        toot.imageUrls!.map(url =>
+          masto
+            .post('media', { file: request(url) })
+            .then(resp => onImageUploaded(resp, toot)),
+        ),
+      ),
+    })),
   );
 };
