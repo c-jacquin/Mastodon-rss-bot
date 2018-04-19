@@ -10,7 +10,8 @@
     "dev": "cross-env NODE_ENV=local nodemon",
     "lint": "tslint \"./src/**/*.ts\" \"./src/**/*.tsx\"",
     "precommit": "lint-staged",
-    "start": "pm2 start ecosystem.config.js"
+    "start": "pm2 start ecosystem.config.js",
+    "reload": "pm2 reload ecosystem.config.js"
   },
   "dependencies": {
     "bunyan": "^1.8.12",
