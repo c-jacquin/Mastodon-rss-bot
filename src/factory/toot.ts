@@ -5,7 +5,7 @@ import { Article } from '../interfaces/Article';
 import { Toot } from '../interfaces/Toot';
 import { getState } from '../lib/state';
 
-const getContentLength = (title, footer) => {
+const getContentLength = (title: string, footer: string): number => {
   return Number(process.env.TOOT_LENGTH) - title.length - footer.length - 3;
 };
 
@@ -20,7 +20,7 @@ const formatContent = (article: Article): string => {
     '\n' +
     splittedContent
       .join('\n')
-      .substr(0, getContentLength(article.title, footer)) +
+      .substr(0, getContentLength(article.title, footer as string)) +
     '...\n\n' +
     footer
   );

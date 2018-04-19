@@ -1,8 +1,9 @@
 import dotenv from 'dotenv';
 import R from 'ramda';
+import { Observable } from 'rxjs/Observable';
 import { fromPromise } from 'rxjs/observable/fromPromise';
 import { interval } from 'rxjs/observable/interval';
-import { catchError, filter, map, merge, switchMap, tap } from 'rxjs/operators';
+import { filter, map, merge, switchMap, tap } from 'rxjs/operators';
 
 dotenv.config();
 
@@ -20,15 +21,13 @@ const onSuccess = (toots: Toot[]) =>
 
 const onError = err => Promise.resolve(logger.error(err));
 
-const doTheBotJob = () => {
+const doTheBotJob = (): Observable<Toot[]> => {
   return fromPromise(getFeed(process.env.RSSFEED_URL)).pipe(
     map(tootsFactory),
     filter(toots => !R.isEmpty(toots)),
     switchMap(uploadImages),
     switchMap(sendToots),
     tap(setState),
-    tap(onSuccess),
-    catchError(onError),
   );
 };
 
@@ -38,4 +37,4 @@ const redoTheJobAgainAndAgain$ = interval(
 
 doTheBotJob()
   .pipe(merge(redoTheJobAgainAndAgain$))
-  .subscribe();
+  .subscribe(onSuccess, onError);

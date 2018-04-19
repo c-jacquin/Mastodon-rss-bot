@@ -9,7 +9,7 @@ const masto = new Mastodon({
   api_url: `${process.env.MASTODON_INSTANCE}/api/v1/`,
 });
 
-const onImageUploaded = (resp: any, toot: Toot) => {
+const onImageUploaded = (resp: any, toot: Toot): string => {
   delete toot.imageUrls;
   return resp.data.id;
 };
@@ -22,7 +22,7 @@ export const sendToots = (toots: Toot[]): Promise<Toot[]> => {
   );
 };
 
-export const uploadImages = (toots: Toot[]): Promise<any> => {
+export const uploadImages = (toots: Toot[]): Promise<Toot[]> => {
   return Promise.all(
     toots.map(async toot => ({
       ...toot,
