@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import R from 'ramda';
 import { fromPromise } from 'rxjs/observable/fromPromise';
 import { interval } from 'rxjs/observable/interval';
-import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
+import { catchError, filter, map, merge, switchMap, tap } from 'rxjs/operators';
 
 dotenv.config();
 
@@ -30,7 +30,7 @@ const doTheBotJob = () => {
 
 doTheBotJob()
   .pipe(
-    switchMap(() =>
+    merge(
       interval(Number(process.env.POLLING_INTERVAL) * 60 * 1000).pipe(
         switchMap(doTheBotJob),
       ),
