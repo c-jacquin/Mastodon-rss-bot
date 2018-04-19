@@ -10,30 +10,32 @@ import { tootsFactory } from './factory/toot';
 import { Toot } from './interfaces/Toot';
 import { getFeed } from './lib/feed';
 import logger from './lib/logger';
-import { sendToots } from './lib/mastodon';
+import { sendToots, uploadImages } from './lib/mastodon';
 import { setState } from './lib/state';
+
+const onSuccess = (toots: Toot[]) =>
+  logger.info(
+    `${toots.length} toots submitted to ${process.env.MASTODON_INSTANCE}`,
+  );
+
+const onError = err => Promise.resolve(logger.error(err));
 
 const doTheBotJob = () => {
   return fromPromise(getFeed(process.env.RSSFEED_URL)).pipe(
     map(tootsFactory),
     filter(toots => !R.isEmpty(toots)),
+    switchMap(uploadImages),
     switchMap(sendToots),
-    tap((toots: Toot[]) => setState((toots as any).shift().articleDate)),
-    tap((toots: Toot[]) =>
-      logger.info(
-        `${toots.length} toots submitted to ${process.env.MASTODON_INSTANCE}`,
-      ),
-    ),
-    catchError(err => Promise.resolve(logger.error(err))),
+    tap(setState),
+    tap(onSuccess),
+    catchError(onError),
   );
 };
 
+const redoTheJobAgainAndAgain$ = interval(
+  Number(process.env.POLLING_INTERVAL) * 60 * 1000,
+).pipe(switchMap(doTheBotJob));
+
 doTheBotJob()
-  .pipe(
-    merge(
-      interval(Number(process.env.POLLING_INTERVAL) * 60 * 1000).pipe(
-        switchMap(doTheBotJob),
-      ),
-    ),
-  )
+  .pipe(merge(redoTheJobAgainAndAgain$))
   .subscribe();
