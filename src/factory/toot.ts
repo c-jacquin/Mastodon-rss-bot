@@ -46,5 +46,6 @@ export const tootsFactory = (articles: Article[]): Toot[] => {
       imageUrls: extractImagesUrl(article),
       status: formatContent(article),
       visibility: process.env.TOOT_VISIBILITY,
-    }));
+    }))
+    .reverse();
 };

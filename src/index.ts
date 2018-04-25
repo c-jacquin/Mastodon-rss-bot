@@ -25,6 +25,7 @@ const doTheBotJob = (): Observable<Toot[]> => {
   return fromPromise(getFeed(process.env.RSSFEED_URL)).pipe(
     map(tootsFactory),
     filter(toots => !R.isEmpty(toots)),
+    map(toots => toots.slice(0, 1)),
     switchMap(uploadImages),
     switchMap(sendToots),
     tap(setState),
